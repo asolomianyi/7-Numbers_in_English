@@ -1,0 +1,703 @@
+<!DOCTYPE html>
+<html lang="uk">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Numbers in English</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,600;12..96,800&family=Source+Sans+3:wght@400;600;700&display=swap" rel="stylesheet">
+<style>
+/* Layout idea: a textbook page — sticky chapter strip on top, one card per topic, yellow "rule boxes" like the textbook, live converters and tap-to-check exercises. */
+:root{
+  --paper:#f4f6fa;
+  --surface:#ffffff;
+  --ink:#18213a;
+  --muted:#5a6377;
+  --line:#dde2eb;
+  --brand:#1b5ea6;
+  --accent:#e2642a;
+  --hl:#fff3c2;
+  --hl-ink:#3d3205;
+  --good:#1d8657;
+  --good-bg:#e3f5ec;
+  --bad:#c33d2c;
+  --bad-bg:#fbe7e3;
+  --font-display:"Bricolage Grotesque", "Segoe UI", system-ui, sans-serif;
+  --font-body:"Source Sans 3", "Segoe UI", system-ui, sans-serif;
+  color-scheme: light;
+}
+@media (prefers-color-scheme: dark){
+  :root:not([data-theme="light"]){
+    --paper:#11151d; --surface:#19202b; --ink:#e8ecf4; --muted:#9ba4b6; --line:#2a3242;
+    --brand:#7db0ea; --accent:#f08a50; --hl:#36301a; --hl-ink:#f5e7b0;
+    --good:#53c48f; --good-bg:#183327; --bad:#ef7966; --bad-bg:#3a1f1b;
+    color-scheme: dark;
+  }
+}
+:root[data-theme="dark"]{
+  --paper:#11151d; --surface:#19202b; --ink:#e8ecf4; --muted:#9ba4b6; --line:#2a3242;
+  --brand:#7db0ea; --accent:#f08a50; --hl:#36301a; --hl-ink:#f5e7b0;
+  --good:#53c48f; --good-bg:#183327; --bad:#ef7966; --bad-bg:#3a1f1b;
+  color-scheme: dark;
+}
+*{box-sizing:border-box}
+html{scroll-behavior:smooth;scroll-padding-top:120px}
+@media (prefers-reduced-motion: reduce){html{scroll-behavior:auto}}
+body{margin:0;background:var(--paper);color:var(--ink);font-family:var(--font-body);font-size:18px;line-height:1.55}
+h1,h2,h3{font-family:var(--font-display);text-wrap:balance;line-height:1.15;margin:0}
+h1{font-size:clamp(28px,4vw,40px);font-weight:800}
+h2{font-size:26px;font-weight:800;color:var(--brand)}
+h3{font-size:19px;font-weight:600;margin-top:6px}
+p{margin:0}
+.num{font-variant-numeric:tabular-nums}
+
+header.top{position:sticky;top:0;z-index:10;background:var(--surface);border-bottom:1px solid var(--line)}
+.top-inner{max-width:1040px;margin:0 auto;padding:12px 20px 0;display:flex;flex-direction:column;gap:10px}
+.title-row{display:flex;align-items:center;justify-content:space-between;gap:16px;flex-wrap:wrap}
+.title-row h1 span{color:var(--accent)}
+.score{display:flex;align-items:center;gap:10px;font-weight:600;color:var(--muted);font-size:16px}
+.score b{color:var(--ink);font-size:20px}
+nav.chapters{display:flex;gap:6px;overflow-x:auto;padding-bottom:10px;scrollbar-width:thin}
+nav.chapters a{flex:0 0 auto;text-decoration:none;color:var(--ink);font-size:15px;font-weight:600;padding:6px 12px;border:1px solid var(--line);border-radius:999px;background:var(--paper)}
+nav.chapters a:hover,nav.chapters a:focus-visible{border-color:var(--accent);color:var(--accent);outline:none}
+nav.chapters a .n{color:var(--accent);margin-right:4px}
+
+main{max-width:1040px;margin:0 auto;padding:24px 20px 80px;display:flex;flex-direction:column;gap:28px}
+.intro{color:var(--muted);max-width:68ch}
+section.card{background:var(--surface);border:1px solid var(--line);border-radius:14px;padding:26px 28px;display:flex;flex-direction:column;gap:18px}
+@media (max-width:520px){section.card{padding:20px 16px}}
+.sec-head{display:flex;align-items:baseline;gap:12px;flex-wrap:wrap}
+.sec-head .n{font-family:var(--font-display);font-weight:800;font-size:34px;color:var(--accent);line-height:1}
+.lead{max-width:68ch}
+.rule{background:var(--hl);color:var(--hl-ink);border-radius:10px;padding:14px 18px;max-width:72ch}
+.rule b{color:inherit}
+.warn{border-left:4px solid var(--accent);padding:4px 0 4px 14px;max-width:72ch}
+.warn::before{content:"Увага! ";font-weight:700;color:var(--accent)}
+.term{color:var(--muted);font-style:italic}
+
+.say{cursor:pointer;color:var(--brand);font-weight:600;border-bottom:1px dashed currentColor;background:none;border-top:0;border-left:0;border-right:0;padding:0;font:inherit;font-weight:600}
+.say:hover,.say:focus-visible{color:var(--accent);outline:none}
+.say::after{content:" \1F50A";font-size:.75em;opacity:.7}
+
+.grid{display:grid;gap:14px}
+.grid.cols-2{grid-template-columns:repeat(auto-fit,minmax(280px,1fr))}
+.grid.cols-3{grid-template-columns:repeat(auto-fit,minmax(220px,1fr))}
+.box{border:1px solid var(--line);border-radius:10px;padding:14px 16px;display:flex;flex-direction:column;gap:8px}
+.box h3{margin:0}
+
+.tbl-wrap{overflow-x:auto}
+table{border-collapse:collapse;width:100%;font-size:17px}
+th,td{text-align:left;padding:8px 12px;border-bottom:1px solid var(--line);vertical-align:top}
+th{font-size:14px;text-transform:uppercase;letter-spacing:.04em;color:var(--muted);font-weight:700}
+td.big{font-weight:700;font-variant-numeric:tabular-nums;white-space:nowrap}
+
+.chips{display:flex;flex-wrap:wrap;gap:8px}
+.chip{border:1px solid var(--line);border-radius:8px;padding:6px 10px;display:flex;gap:8px;align-items:baseline;background:var(--paper)}
+.chip .d{font-weight:700;font-variant-numeric:tabular-nums;min-width:1.6em;text-align:right;color:var(--muted)}
+
+.pairs{display:grid;grid-template-columns:repeat(auto-fit,minmax(240px,1fr));gap:10px}
+.pair{display:flex;gap:8px}
+.pair button{flex:1;border:1px solid var(--line);background:var(--paper);color:var(--ink);border-radius:10px;padding:10px;font:inherit;cursor:pointer;display:flex;flex-direction:column;align-items:center;gap:2px}
+.pair button:hover,.pair button:focus-visible{border-color:var(--accent);outline:none}
+.pair .d{font-family:var(--font-display);font-weight:800;font-size:24px;font-variant-numeric:tabular-nums}
+.pair .w{font-size:15px;color:var(--muted)}
+.pair .w u{color:var(--accent);text-decoration:none;font-weight:700}
+
+/* widgets */
+.tool{border:2px solid var(--brand);border-radius:12px;padding:16px 18px;display:flex;flex-direction:column;gap:12px}
+.tool-label{font-size:13px;font-weight:700;text-transform:uppercase;letter-spacing:.06em;color:var(--brand)}
+.tool-row{display:flex;gap:10px;align-items:center;flex-wrap:wrap}
+.tool input{font:inherit;font-size:22px;font-weight:600;padding:8px 12px;border:1px solid var(--line);border-radius:8px;background:var(--paper);color:var(--ink);min-width:0;max-width:100%;font-variant-numeric:tabular-nums}
+.tool input:focus-visible{outline:2px solid var(--accent);outline-offset:1px}
+.out{display:grid;grid-template-columns:minmax(120px,auto) 1fr;gap:6px 14px;align-items:baseline}
+@media (max-width:520px){.out{grid-template-columns:1fr}}
+.out .k{color:var(--muted);font-size:15px}
+.out .v{font-size:20px;font-weight:600;word-break:break-word}
+.out .v .alt{display:block;font-size:16px;font-weight:400;color:var(--muted)}
+.speak{border:0;background:none;cursor:pointer;font-size:18px;padding:0 4px;color:var(--brand);vertical-align:middle}
+.speak:focus-visible{outline:2px solid var(--accent);border-radius:4px}
+
+/* quizzes */
+.practice{display:flex;flex-direction:column;gap:10px;border-top:1px dashed var(--line);padding-top:16px}
+.practice > h3{color:var(--accent)}
+.q{display:flex;flex-direction:column;gap:8px;padding:10px 0}
+.q + .q{border-top:1px solid var(--line)}
+.q-text{font-weight:600}
+.opts{display:flex;flex-wrap:wrap;gap:8px}
+.opt{font:inherit;font-size:17px;border:1px solid var(--line);background:var(--paper);color:var(--ink);border-radius:8px;padding:7px 14px;cursor:pointer}
+.opt:hover:not(:disabled),.opt:focus-visible{border-color:var(--brand);outline:none}
+.opt:disabled{cursor:default}
+.opt.right{background:var(--good-bg);border-color:var(--good);color:var(--good);font-weight:700}
+.opt.wrong{background:var(--bad-bg);border-color:var(--bad);color:var(--bad);text-decoration:line-through}
+.expl{font-size:16px;color:var(--muted)}
+.expl.ok::before{content:"Правильно. ";color:var(--good);font-weight:700}
+.expl.no::before{content:"Не зовсім. ";color:var(--bad);font-weight:700}
+.compact{display:grid;grid-template-columns:repeat(auto-fit,minmax(230px,1fr));gap:8px 18px}
+.compact .q{flex-direction:row;align-items:center;gap:10px;padding:6px 0;border-top:0}
+.compact .q-text{min-width:3.2em;font-size:20px;font-variant-numeric:tabular-nums}
+.compact .opt{padding:5px 10px}
+.compact .expl{display:none}
+
+/* exercise 1 */
+.ex-row{display:grid;grid-template-columns:150px 1fr auto;gap:10px;align-items:center;padding:8px 0;border-bottom:1px solid var(--line)}
+@media (max-width:640px){.ex-row{grid-template-columns:1fr}}
+.ex-row .date{font-weight:700;font-variant-numeric:tabular-nums;font-size:19px}
+.ex-row input{font:inherit;padding:8px 10px;border:1px solid var(--line);border-radius:8px;background:var(--paper);color:var(--ink);width:100%}
+.ex-row input.right{border-color:var(--good);background:var(--good-bg)}
+.ex-row input.wrong{border-color:var(--bad);background:var(--bad-bg)}
+.ex-row .fb{grid-column:1/-1;font-size:15px;color:var(--muted)}
+.ex-row .fb:empty{display:none}
+.btn{font:inherit;font-weight:700;border:0;border-radius:8px;padding:9px 16px;cursor:pointer;background:var(--brand);color:#fff}
+.btn.ghost{background:transparent;color:var(--brand);border:1px solid var(--brand)}
+.btn:focus-visible{outline:2px solid var(--accent);outline-offset:2px}
+:root[data-theme="dark"] .btn:not(.ghost){color:#0d1420}
+@media (prefers-color-scheme: dark){:root:not([data-theme="light"]) .btn:not(.ghost){color:#0d1420}}
+.actions{display:flex;gap:10px;flex-wrap:wrap}
+ul.tight{margin:0;padding-left:22px;display:flex;flex-direction:column;gap:6px;max-width:72ch}
+</style>
+</head>
+<body>
+<header class="top">
+  <div class="top-inner">
+    <div class="title-row">
+      <h1>Numbers <span>in English</span></h1>
+      <div class="score" aria-live="polite">Правильних відповідей: <b id="score">0 / 0</b> <button class="btn ghost" id="reset" type="button">Почати знову</button></div>
+    </div>
+    <nav class="chapters" aria-label="Розділи">
+      <a href="#cardinal"><span class="n">1</span>Кількісні</a>
+      <a href="#ordinal"><span class="n">2</span>Порядкові</a>
+      <a href="#dates"><span class="n">3</span>Дати</a>
+      <a href="#years"><span class="n">4</span>Роки</a>
+      <a href="#phone"><span class="n">5</span>Телефон</a>
+      <a href="#money"><span class="n">6</span>Гроші</a>
+      <a href="#extras"><span class="n">7</span>Дрібниці</a>
+      <a href="#practice"><span class="n">8</span>Вправа з підручника</a>
+    </nav>
+  </div>
+</header>
+
+<main>
+<p class="intro">Натисніть на будь-яке <button class="say" type="button" data-say="English word">English word</button> з пунктирним підкресленням, щоб почути вимову. У жовтих рамках подано головні правила. Наприкінці кожного розділу є вправа: натисніть на відповідь, і сторінка одразу покаже, чи вона правильна.</p>
+
+<!-- 1 CARDINAL -->
+<section class="card" id="cardinal">
+  <div class="sec-head"><span class="n">1</span><h2>Кількісні числівники <span class="term">(cardinal numbers)</span></h2></div>
+  <p class="lead">Відповідають на питання <b>«скільки?»</b>: <i>three cats, twenty students</i>.</p>
+
+  <div class="grid cols-3">
+    <div class="box">
+      <h3>0–12: просто вивчити</h3>
+      <div class="chips" id="chips-0-12"></div>
+    </div>
+    <div class="box">
+      <h3>13–19: закінчення -teen</h3>
+      <div class="chips" id="chips-teens"></div>
+    </div>
+    <div class="box">
+      <h3>Десятки: закінчення -ty</h3>
+      <div class="chips" id="chips-tens"></div>
+    </div>
+  </div>
+
+  <p class="warn">Пишемо <b>forty</b>, без <i>u</i>, хоча <i>four</i> пишеться з <i>u</i>. Пишемо <b>thirteen</b> (не threeteen), <b>fifteen</b> (не fiveteen), <b>eighteen</b> (одна <i>t</i>).</p>
+
+  <h3>Як на слух відрізнити -teen і -ty</h3>
+  <p class="lead">У числах на <b>-teen</b> наголос падає <b>в кінці</b> і звучить довге «іі»: thir<b>TEEN</b>. У числах на <b>-ty</b> наголос падає <b>на початку</b>: <b>THIR</b>ty. Натисніть і послухайте різницю.</p>
+  <div class="pairs" id="pairs"></div>
+
+  <div class="grid cols-2">
+    <div class="box">
+      <h3>21–99: через дефіс <span class="term">(hyphen)</span></h3>
+      <p><button class="say" type="button">twenty-one</button>, <button class="say" type="button">thirty-five</button>, <button class="say" type="button">ninety-nine</button></p>
+    </div>
+    <div class="box">
+      <h3>Сотні: «and» у британському варіанті</h3>
+      <p><span class="num">245</span>: <button class="say" type="button">two hundred and forty-five</button></p>
+      <p class="expl">В американському варіанті <i>and</i> часто пропускають: two hundred forty-five.</p>
+    </div>
+  </div>
+
+  <div class="rule">
+    <b>Правило без -s.</b> Якщо перед <i>hundred / thousand / million</i> стоїть число, закінчення <b>-s</b> немає: <i>three hundred</i>, <i>five thousand</i>, <i>two million people</i>.<br>
+    Якщо точної кількості немає, <b>-s</b> з'являється, а після слова стоїть <b>of</b>: <i>hundreds <b>of</b> people</i> (сотні людей), <i>thousands <b>of</b> stars</i>.
+  </div>
+
+  <div class="tbl-wrap"><table>
+    <thead><tr><th>Число</th><th>Як читаємо</th></tr></thead>
+    <tbody>
+      <tr><td class="big">100</td><td><button class="say" type="button">a hundred</button> / <button class="say" type="button">one hundred</button></td></tr>
+      <tr><td class="big">1,000</td><td><button class="say" type="button">a thousand</button> / one thousand</td></tr>
+      <tr><td class="big">5,250</td><td><button class="say" type="button">five thousand, two hundred and fifty</button></td></tr>
+      <tr><td class="big">1,000,000</td><td><button class="say" type="button">a million</button></td></tr>
+      <tr><td class="big">1,000,000,000</td><td><button class="say" type="button">a billion</button> (українською «мільярд»)</td></tr>
+    </tbody>
+  </table></div>
+
+  <div class="rule"><b>Кома і крапка пишуться навпаки, ніж в українській.</b> Розряди англійською відділяємо <b>комою</b>: 10,000 (у нас 10 000). Дробову частину відділяємо <b>крапкою</b>: 3.5 (у нас 3,5).</div>
+
+  <div class="tool" id="tool-number">
+    <div class="tool-label">Перетворювач: число → слова</div>
+    <div class="tool-row"><label for="in-number">Введіть будь-яке число:</label> <input id="in-number" type="number" value="2026" min="0" max="999999999999" style="width:220px"></div>
+    <div class="out">
+      <span class="k">Кількісне <span class="term">(cardinal)</span></span><span class="v" id="o-card"></span>
+      <span class="k">Порядкове <span class="term">(ordinal)</span></span><span class="v" id="o-ord"></span>
+      <span class="k">Скорочення</span><span class="v" id="o-abbr"></span>
+    </div>
+  </div>
+
+  <div class="practice"><h3>Перевір себе</h3><div id="quiz-cardinal"></div></div>
+</section>
+
+<!-- 2 ORDINAL -->
+<section class="card" id="ordinal">
+  <div class="sec-head"><span class="n">2</span><h2>Порядкові числівники <span class="term">(ordinal numbers)</span></h2></div>
+  <p class="lead">Відповідають на питання <b>«який за рахунком?»</b>: <i>the first day, the third floor</i>. Перед ними зазвичай ставимо <b>the</b>.</p>
+  <div class="rule">Здебільшого просто додаємо <b>-th</b>: four → <button class="say" type="button">fourth</button>, six → <button class="say" type="button">sixth</button>, ten → <button class="say" type="button">tenth</button>.</div>
+
+  <div class="grid cols-2">
+    <div class="box">
+      <h3>Три винятки</h3>
+      <div class="tbl-wrap"><table>
+        <thead><tr><th>Число</th><th>Слово</th><th>Скорочення</th></tr></thead>
+        <tbody>
+          <tr><td class="big">1</td><td><button class="say" type="button">first</button></td><td class="big">1<b>st</b></td></tr>
+          <tr><td class="big">2</td><td><button class="say" type="button">second</button></td><td class="big">2<b>nd</b></td></tr>
+          <tr><td class="big">3</td><td><button class="say" type="button">third</button></td><td class="big">3<b>rd</b></td></tr>
+        </tbody>
+      </table></div>
+    </div>
+    <div class="box">
+      <h3>Зміни в написанні</h3>
+      <ul class="tight">
+        <li>five → <button class="say" type="button">fifth</button>, twelve → <button class="say" type="button">twelfth</button> (<i>ve</i> змінюється на <i>f</i>)</li>
+        <li>eight → <button class="say" type="button">eighth</button> (додаємо тільки <i>h</i>)</li>
+        <li>nine → <button class="say" type="button">ninth</button> (зникає <i>e</i>)</li>
+        <li>twenty → <button class="say" type="button">twentieth</button> (<i>y</i> змінюється на <i>ieth</i>)</li>
+      </ul>
+    </div>
+  </div>
+
+  <div class="rule"><b>Складені числа:</b> змінюється тільки <b>останнє</b> слово: twenty-<b>first</b>, thirty-<b>second</b>, one hundred and <b>fifth</b>.</div>
+  <div class="rule"><b>Скорочення</b> <span class="term">(abbreviations)</span>: беремо дві останні літери слова. 1st, 2nd, 3rd, 4th… 21st, 22nd, 23rd.<br>Але <b>11th, 12th, 13th</b>, бо це eleven<b>th</b>, twelf<b>th</b>, thirteen<b>th</b>.</div>
+
+  <div class="practice"><h3>Яке закінчення? Натисніть st, nd, rd або th</h3><div class="compact" id="quiz-suffix"></div></div>
+  <div class="practice"><h3>Як правильно написати?</h3><div id="quiz-ordinal"></div></div>
+</section>
+
+<!-- 3 DATES -->
+<section class="card" id="dates">
+  <div class="sec-head"><span class="n">3</span><h2>Дати <span class="term">(dates)</span></h2></div>
+  <div class="rule"><b>Головне правило:</b> дату пишемо як кількісне число, а <b>читаємо як порядкове</b>. Пишемо 10 May, читаємо <button class="say" type="button">the tenth of May</button>.</div>
+
+  <div class="tbl-wrap"><table>
+    <thead><tr><th></th><th>Британський варіант <span class="term">(BrE)</span></th><th>Американський варіант <span class="term">(AmE)</span></th></tr></thead>
+    <tbody>
+      <tr><td><b>Пишемо</b></td><td class="num">22 November 1925<br>22/11/1925 (день/місяць)</td><td class="num">November 22, 1925<br>11/22/1925 (місяць/день)</td></tr>
+      <tr><td><b>Читаємо</b></td><td><button class="say" type="button">the twenty-second of November</button></td><td><button class="say" type="button" data-lang="en-US">November twenty-second</button></td></tr>
+    </tbody>
+  </table></div>
+  <p class="warn">Запис <b class="num">03/04/2025</b> британець прочитає як 3 квітня, а американець як 4 березня.</p>
+
+  <div class="tool">
+    <div class="tool-label">Перетворювач дат</div>
+    <div class="tool-row"><label for="in-date">Оберіть дату:</label> <input id="in-date" type="date" value="2026-11-16"></div>
+    <div class="out">
+      <span class="k">BrE, пишемо</span><span class="v num" id="o-bre-w"></span>
+      <span class="k">BrE, читаємо</span><span class="v" id="o-bre-s"></span>
+      <span class="k">AmE, пишемо</span><span class="v num" id="o-ame-w"></span>
+      <span class="k">AmE, читаємо</span><span class="v" id="o-ame-s"></span>
+    </div>
+  </div>
+
+  <div class="grid cols-3">
+    <div class="box"><h3>on + конкретний день</h3><p><i>on the tenth of May</i>, <i>on Monday</i>, <i>on Christmas Day</i></p></div>
+    <div class="box"><h3>in + місяць, рік, пора року</h3><p><i>in May</i>, <i>in 1995</i>, <i>in winter</i></p></div>
+    <div class="box"><h3>at + свято загалом</h3><p><i>at Christmas</i>, <i>at Easter</i>, <i>at the weekend</i> (BrE)</p></div>
+  </div>
+
+  <div class="practice"><h3>Перевір себе: on, in чи at?</h3><div id="quiz-dates"></div></div>
+</section>
+
+<!-- 4 YEARS -->
+<section class="card" id="years">
+  <div class="sec-head"><span class="n">4</span><h2>Роки <span class="term">(years)</span></h2></div>
+  <div class="rule"><b>Рік ділимо на дві пари цифр:</b> 19 | 25 → <button class="say" type="button">nineteen twenty-five</button>. 17 | 87 → <button class="say" type="button">seventeen eighty-seven</button>.</div>
+
+  <div class="tbl-wrap"><table>
+    <thead><tr><th>Рік</th><th>Як читаємо</th><th>Чому так</th></tr></thead>
+    <tbody>
+      <tr><td class="big">1900</td><td><button class="say" type="button">nineteen hundred</button></td><td>рік закінчується на 00</td></tr>
+      <tr><td class="big">1905</td><td><button class="say" type="button">nineteen oh five</button></td><td>0 читаємо як «оу»</td></tr>
+      <tr><td class="big">1066</td><td><button class="say" type="button">ten sixty-six</button></td><td>звичайні дві пари</td></tr>
+      <tr><td class="big">2000</td><td><button class="say" type="button">two thousand</button></td><td>особливий рік</td></tr>
+      <tr><td class="big">2002</td><td><button class="say" type="button">two thousand and two</button></td><td>2001–2009 читають так</td></tr>
+      <tr><td class="big">2013</td><td><button class="say" type="button">twenty thirteen</button> / two thousand and thirteen</td><td>з 2010 частіше читають парами</td></tr>
+      <tr><td class="big">2026</td><td><button class="say" type="button">twenty twenty-six</button></td><td>так говорять найчастіше</td></tr>
+    </tbody>
+  </table></div>
+
+  <div class="grid cols-3">
+    <div class="box"><h3>Десятиліття <span class="term">(decades)</span></h3><p>the 1990s = <button class="say" type="button">the nineteen-nineties</button> (дев'яності). Апостроф перед <i>s</i> не ставимо.</p></div>
+    <div class="box"><h3>Століття <span class="term">(centuries)</span></h3><p>the 21st century = <button class="say" type="button">the twenty-first century</button>. Роки 1800-ті належать до XIX століття, тобто <i>the nineteenth century</i>.</p></div>
+    <div class="box"><h3>BC і AD</h3><p>500 <b>BC</b>: до нашої ери (Before Christ). <b>AD</b> 988: нашої ери (Anno Domini). Нейтральні варіанти: BCE / CE.</p></div>
+  </div>
+
+  <div class="tool">
+    <div class="tool-label">Як прочитати рік</div>
+    <div class="tool-row"><label for="in-year">Введіть рік:</label> <input id="in-year" type="number" value="1925" min="1" max="2999" style="width:140px"></div>
+    <div class="out">
+      <span class="k">Читаємо</span><span class="v" id="o-year"></span>
+      <span class="k">Століття</span><span class="v" id="o-cent"></span>
+      <span class="k">Десятиліття</span><span class="v" id="o-dec"></span>
+    </div>
+  </div>
+
+  <div class="practice"><h3>Перевір себе</h3><div id="quiz-years"></div></div>
+</section>
+
+<!-- 6 PHONE -->
+<section class="card" id="phone">
+  <div class="sec-head"><span class="n">5</span><h2>Номери телефонів</h2></div>
+  <div class="rule">Номер телефону читаємо <b>по одній цифрі</b> і робимо паузи між групами. 0 читаємо як <b>oh</b>. Дві однакові цифри поспіль позначаємо словом <b>double</b> (44 → double four), три однакові словом <b>triple</b> (777 → triple seven).</div>
+  <div class="tool">
+    <div class="tool-label">Як прочитати номер</div>
+    <div class="tool-row"><label for="in-phone">Введіть номер (з пробілами між групами):</label> <input id="in-phone" type="text" value="067 123 44 55" style="width:240px" inputmode="tel"></div>
+    <div class="out"><span class="k">Читаємо</span><span class="v" id="o-phone"></span></div>
+  </div>
+  <div class="practice"><h3>Перевір себе</h3><div id="quiz-phone"></div></div>
+</section>
+
+<!-- 8 MONEY -->
+<section class="card" id="money">
+  <div class="sec-head"><span class="n">6</span><h2>Гроші</h2></div>
+  <div class="rule">Знак валюти пишемо <b>перед</b> числом ($10), а читаємо <b>після</b>: <button class="say" type="button">ten dollars</button>.</div>
+  <div class="tbl-wrap"><table>
+    <thead><tr><th>Пишемо</th><th>Читаємо</th></tr></thead>
+    <tbody>
+      <tr><td class="big">£5.50</td><td><button class="say" type="button">five pounds fifty</button></td></tr>
+      <tr><td class="big">$2.99</td><td><button class="say" type="button" data-lang="en-US">two dollars ninety-nine</button> (cents)</td></tr>
+      <tr><td class="big">€1</td><td><button class="say" type="button">one euro</button></td></tr>
+      <tr><td class="big">50p</td><td><button class="say" type="button">fifty p</button> (п'ятдесят пенсів)</td></tr>
+      <tr><td class="big">₴100</td><td><button class="say" type="button">a hundred hryvnias</button></td></tr>
+    </tbody>
+  </table></div>
+  <div class="practice"><h3>Перевір себе</h3><div id="quiz-money"></div></div>
+</section>
+
+<!-- 10 EXTRAS -->
+<section class="card" id="extras">
+  <div class="sec-head"><span class="n">7</span><h2>Корисні дрібниці</h2></div>
+  <div class="grid cols-2">
+    <div class="box"><h3>Скільки разів</h3><p><button class="say" type="button">once</button> (1 раз), <button class="say" type="button">twice</button> (2 рази), <button class="say" type="button">three times</button>, four times…</p></div>
+    <div class="box"><h3>Номер чогось</h3><p>Порядкове з <b>the</b> стоїть перед словом, кількісне без <i>the</i> стоїть після: <i>the third lesson</i> = <i>lesson three</i>. Так само <i>page 10, room 7, bus number 25</i>.</p></div>
+    <div class="box"><h3>Королі й королеви</h3><p>Римську цифру <span class="term">(Roman numerals)</span> читаємо як порядкове число з <b>the</b>: Henry VIII → <button class="say" type="button">Henry the Eighth</button>, Elizabeth II → <button class="say" type="button">Elizabeth the Second</button>.</p></div>
+    <div class="box"><h3>Поверхи</h3><p>BrE: <b>ground floor</b> = наш 1-й, <b>first floor</b> = наш 2-й.<br>AmE: <b>first floor</b> = наш 1-й.</p></div>
+    <div class="box"><h3>Число як прикметник</h3><p>Ставимо дефіс і <b>не додаємо -s</b>: <i>a ten-year-old boy</i>, <i>a five-minute break</i>. Але: <i>the boy is ten years old</i>.</p></div>
+    <div class="box"><h3>Dozen</h3><p><button class="say" type="button">a dozen</button> = 12: <i>a dozen eggs</i>. Без числа: <i>dozens of times</i> (десятки разів).</p></div>
+    <div class="box"><h3>Приблизні числа</h3><p><i>about / around twenty</i>, <i>twenty-odd</i> (двадцять з гаком), <i>in his forties</i> (йому за сорок).</p></div>
+    <div class="box"><h3>На письмі</h3><p>Речення <b>не починаємо з цифри</b>: <i>Twenty students came</i>. Числа до 10 зазвичай пишуть словами, більші пишуть цифрами.</p></div>
+  </div>
+  <div class="practice"><h3>Перевір себе</h3><div id="quiz-extras"></div></div>
+</section>
+
+<!-- 11 PRACTICE -->
+<section class="card" id="practice">
+  <div class="sec-head"><span class="n">8</span><h2>Вправа 1 з підручника</h2></div>
+  <p class="lead">Напишіть дату так, як її вимовляють англійською. Числа пишіть словами.<br><b>Example:</b> 11 Nov. 2012 → <i>the eleventh of November, two thousand and twelve</i></p>
+  <p class="expl">Можна писати британський варіант (the … of …) або американський (November the …). Великі літери й коми не мають значення.</p>
+  <div id="ex1"></div>
+  <div class="actions">
+    <button class="btn" type="button" id="ex-check">Перевірити все</button>
+    <button class="btn ghost" type="button" id="ex-show">Показати відповіді</button>
+    <button class="btn ghost" type="button" id="ex-clear">Очистити</button>
+  </div>
+</section>
+</main>
+
+<script>
+(function(){
+"use strict";
+// ---------- speech ----------
+function speak(text, lang){
+  try{
+    if(!("speechSynthesis" in window)) return;
+    var u = new SpeechSynthesisUtterance(text);
+    u.lang = lang || "en-GB";
+    u.rate = 0.85;
+    var voices = window.speechSynthesis.getVoices() || [];
+    var v = voices.find(function(x){return x.lang === u.lang;}) || voices.find(function(x){return x.lang && x.lang.indexOf("en")===0;});
+    if(v) u.voice = v;
+    window.speechSynthesis.cancel();
+    window.speechSynthesis.speak(u);
+  }catch(e){}
+}
+try{ if("speechSynthesis" in window) window.speechSynthesis.getVoices(); }catch(e){}
+document.addEventListener("click", function(e){
+  var t = e.target.closest(".say, .speak, [data-say]");
+  if(!t || t.classList.contains("opt")) return;
+  var text = t.getAttribute("data-say") || t.textContent;
+  speak(text.replace(/\u{1F50A}/gu,"").trim(), t.getAttribute("data-lang"));
+});
+
+// ---------- number words ----------
+var ONES = ["zero","one","two","three","four","five","six","seven","eight","nine","ten","eleven","twelve","thirteen","fourteen","fifteen","sixteen","seventeen","eighteen","nineteen"];
+var TENS = ["","","twenty","thirty","forty","fifty","sixty","seventy","eighty","ninety"];
+var MONTHS = ["January","February","March","April","May","June","July","August","September","October","November","December"];
+function u100(n){ if(n<20) return ONES[n]; var r=n%10; return TENS[Math.floor(n/10)] + (r? "-"+ONES[r] : ""); }
+function u1000(n){ var h=Math.floor(n/100), r=n%100, p=[]; if(h) p.push(ONES[h]+" hundred"); if(r){ if(h) p.push("and"); p.push(u100(r)); } return p.join(" "); }
+function cardinal(n){
+  if(n===0) return "zero";
+  var neg = n<0; n=Math.abs(n);
+  var scales=[[1e9,"billion"],[1e6,"million"],[1e3,"thousand"]], out="", rest=n;
+  scales.forEach(function(s){ if(rest>=s[0]){ out += (out? ", ":"") + u1000(Math.floor(rest/s[0])) + " " + s[1]; rest = rest % s[0]; } });
+  if(rest>0){ out += out ? (rest<100 ? " and "+u100(rest) : ", "+u1000(rest)) : u1000(rest); }
+  return (neg? "minus ":"") + out;
+}
+var ORD = {one:"first",two:"second",three:"third",five:"fifth",eight:"eighth",nine:"ninth",twelve:"twelfth"};
+function ordinalWords(words){
+  var m = words.match(/^(.*?)([a-z]+)$/); var head=m[1], last=m[2];
+  var o = ORD[last] || (/y$/.test(last) ? last.slice(0,-1)+"ieth" : last+"th");
+  return head+o;
+}
+function suffix(n){ var t=n%100; if(t>=11&&t<=13) return "th"; return ({1:"st",2:"nd",3:"rd"})[n%10] || "th"; }
+
+function yearWords(y){
+  if(y<100) return [cardinal(y)];
+  if(y===2000) return ["two thousand"];
+  var first=Math.floor(y/100), last=y%100;
+  if(y>2000 && y<2010) return ["two thousand and "+ONES[last], "twenty oh "+ONES[last]];
+  if(y>=2010 && y<2100) return ["twenty "+u100(last), "two thousand and "+u100(last)];
+  if(last===0){ return y%1000===0 ? [cardinal(y)] : [u100(first)+" hundred"]; }
+  if(last<10) return [u100(first)+" oh "+ONES[last]];
+  return [u100(first)+" "+u100(last)];
+}
+function centuryOf(y){ var c=Math.ceil(y/100); return "the "+ordinalWords(cardinal(c))+" century ("+c+suffix(c)+")"; }
+
+function setOut(id, main, alts, lang){
+  var el=document.getElementById(id); el.innerHTML="";
+  var s=document.createElement("span"); s.textContent=main; el.appendChild(s);
+  var b=document.createElement("button"); b.className="speak"; b.type="button"; b.setAttribute("aria-label","Прослухати"); b.setAttribute("data-say",main); if(lang) b.setAttribute("data-lang",lang); b.textContent="\u{1F50A}"; el.appendChild(b);
+  (alts||[]).forEach(function(a){ var x=document.createElement("span"); x.className="alt"; x.textContent="або: "+a; el.appendChild(x); });
+}
+function setText(id, t){ document.getElementById(id).textContent=t; }
+
+// ---------- chips ----------
+function fillChips(id, nums){
+  var box=document.getElementById(id);
+  nums.forEach(function(n){
+    var c=document.createElement("div"); c.className="chip";
+    c.innerHTML='<span class="d">'+n+'</span>';
+    var b=document.createElement("button"); b.type="button"; b.className="say"; b.textContent=cardinal(n); c.appendChild(b);
+    box.appendChild(c);
+  });
+}
+fillChips("chips-0-12",[0,1,2,3,4,5,6,7,8,9,10,11,12]);
+fillChips("chips-teens",[13,14,15,16,17,18,19]);
+fillChips("chips-tens",[20,30,40,50,60,70,80,90]);
+
+var pairs=document.getElementById("pairs");
+[3,4,5,6,7,8,9].forEach(function(d){
+  var teen=ONES[10+d], ty=TENS[d];
+  var stemT = teen.slice(0,-4), stemY = ty.slice(0,-2);
+  var p=document.createElement("div"); p.className="pair";
+  p.innerHTML='<button type="button" data-say="'+teen+'"><span class="d">'+(10+d)+'</span><span class="w">'+stemT+'<u>TEEN</u></span></button>'+
+              '<button type="button" data-say="'+ty+'"><span class="d">'+(d*10)+'</span><span class="w"><u>'+stemY.toUpperCase()+'</u>ty</span></button>';
+  pairs.appendChild(p);
+});
+
+// ---------- tools ----------
+function updNumber(){
+  var v=parseInt(document.getElementById("in-number").value,10);
+  if(isNaN(v)){ ["o-card","o-ord","o-abbr"].forEach(function(i){setText(i,"Введіть ціле число");}); return; }
+  if(Math.abs(v)>999999999999){ setText("o-card","Завелике число: максимум 999,999,999,999"); setText("o-ord",""); setText("o-abbr",""); return; }
+  var c=cardinal(v); setOut("o-card", c);
+  if(v<0){ setText("o-ord","Для від'ємних чисел порядкових немає"); setText("o-abbr",""); return; }
+  setOut("o-ord", "the "+ordinalWords(c));
+  setText("o-abbr", v.toLocaleString("en-US")+suffix(v));
+}
+document.getElementById("in-number").addEventListener("input", updNumber); updNumber();
+
+function updDate(){
+  var val=document.getElementById("in-date").value;
+  var m=val.match(/^(\d{4})-(\d{2})-(\d{2})$/);
+  if(!m){ ["o-bre-w","o-bre-s","o-ame-w","o-ame-s"].forEach(function(i){setText(i,"Оберіть дату");}); return; }
+  var y=+m[1], mo=+m[2], d=+m[3], mon=MONTHS[mo-1], dd=ordinalWords(cardinal(d)), yw=yearWords(y)[0];
+  setText("o-bre-w", d+" "+mon+" "+y+"   ·   "+m[3]+"/"+m[2]+"/"+m[1]);
+  setOut("o-bre-s", "the "+dd+" of "+mon+", "+yw);
+  setText("o-ame-w", mon+" "+d+", "+y+"   ·   "+m[2]+"/"+m[3]+"/"+m[1]);
+  setOut("o-ame-s", mon+" "+dd+", "+yw.replace(" and "," "), null, "en-US");
+}
+document.getElementById("in-date").addEventListener("input", updDate); updDate();
+
+function updYear(){
+  var y=parseInt(document.getElementById("in-year").value,10);
+  if(isNaN(y)||y<1||y>2999){ setText("o-year","Введіть рік від 1 до 2999"); setText("o-cent",""); setText("o-dec",""); return; }
+  var w=yearWords(y); setOut("o-year", w[0], w.slice(1));
+  setText("o-cent", centuryOf(y));
+  if(y>=1000){ var dec=Math.floor(y/10)*10; var dw=yearWords(dec)[0];
+    var decWord = dec%100===0 ? null : dw.replace(/(\S+)$/, function(x){ return /y$/.test(x) ? x.slice(0,-1)+"ies" : x+"s"; });
+    setText("o-dec", decWord ? "the "+dec+"s = the "+decWord : "the "+dec+"s (перше десятиліття століття читають інакше, наприклад the two-thousands / the nineteen hundreds)");
+  } else setText("o-dec","—");
+}
+document.getElementById("in-year").addEventListener("input", updYear); updYear();
+
+function digitWord(c){ return c==="0" ? "oh" : ONES[+c]; }
+function readGroup(g){
+  var out=[], i=0;
+  while(i<g.length){
+    var j=i; while(j<g.length && g[j]===g[i]) j++;
+    var run=j-i;
+    while(run>0){
+      if(run===3 || run>=5){ out.push("triple "+digitWord(g[i])); run-=3; }
+      else if(run===2 || run===4){ out.push("double "+digitWord(g[i])); run-=2; }
+      else { out.push(digitWord(g[i])); run-=1; }
+    }
+    i=j;
+  }
+  return out.join(" ");
+}
+function updPhone(){
+  var raw=document.getElementById("in-phone").value;
+  var groups=raw.split(/[\s\-–]+/).map(function(g){return g.replace(/\D/g,"");}).filter(Boolean);
+  if(!groups.length){ setText("o-phone","Введіть цифри"); return; }
+  setOut("o-phone", groups.map(readGroup).join(", "));
+}
+document.getElementById("in-phone").addEventListener("input", updPhone); updPhone();
+
+
+// ---------- quizzes ----------
+var QUIZ = {
+  "quiz-cardinal":[
+    {q:"40 пишемо так:", o:["fourty","forty"], a:1, e:"У forty немає u, хоча four пишеться з u."},
+    {q:"15 пишемо так:", o:["fiveteen","fifteen"], a:1, e:"five змінюється на fif-: fifteen, fifty, fifth."},
+    {q:"18 пишемо так:", o:["eighteen","eightteen"], a:0, e:"Тільки одна t: eigh + teen."},
+    {q:"90 пишемо так:", o:["ninty","ninety"], a:1, e:"У ninety зберігається e: nine + ty. (А в ninth e зникає.)"},
+    {q:"«300 учнів» англійською:", o:["three hundreds students","three hundred students"], a:1, e:"Перед hundred стоїть число, тому без -s."},
+    {q:"«Сотні людей» англійською:", o:["hundred of people","hundreds of people"], a:1, e:"Точного числа немає, тому -s і of."},
+    {q:"Три з половиною англійською пишемо так:", o:["3,5","3.5"], a:1, e:"Дробову частину англійською відділяємо крапкою."},
+    {q:"Яке число ви чуєте, якщо наголос на початку: FIF-ty?", o:["15","50"], a:1, e:"Наголос на початку означає -ty, тобто 50. У fif-TEEN наголос у кінці."}
+  ],
+  "quiz-suffix":[1,2,3,4,11,12,13,21,22,23,31,42,101,111,112,153].map(function(n){
+    var s=suffix(n); return {q:n+"…", o:["st","nd","rd","th"], a:["st","nd","rd","th"].indexOf(s), e:""};
+  }),
+  "quiz-ordinal":[
+    {q:"5-й:", o:["fiveth","fifth"], a:1, e:"ve змінюється на f: fifth."},
+    {q:"9-й:", o:["nineth","ninth"], a:1, e:"У ninth зникає e."},
+    {q:"12-й:", o:["twelfth","twelveth"], a:0, e:"ve змінюється на f: twelfth."},
+    {q:"20-й:", o:["twentyth","twentieth"], a:1, e:"y змінюється на ieth."},
+    {q:"21-й:", o:["twentieth-first","twenty-first"], a:1, e:"Змінюється тільки останнє слово."},
+    {q:"8-й:", o:["eighth","eightth"], a:0, e:"До eight додаємо тільки h."}
+  ],
+  "quiz-dates":[
+    {q:"My birthday is ___ the ninth of April.", o:["in","on","at"], a:1, e:"Конкретний день, тому on."},
+    {q:"She was born ___ 2010.", o:["in","on","at"], a:0, e:"Рік, тому in."},
+    {q:"We decorate the tree ___ Christmas.", o:["in","on","at"], a:2, e:"Свято загалом, тому at."},
+    {q:"We open presents ___ Christmas Day.", o:["in","on","at"], a:1, e:"Конкретний день свята, тому on."},
+    {q:"School starts ___ September.", o:["in","on","at"], a:0, e:"Місяць, тому in."},
+    {q:"Американець бачить 03/04/2025. Яка це дата?", o:["3 квітня","4 березня"], a:1, e:"В американському записі спершу місяць, потім день."},
+    {q:"Як прочитати 14 Feb (BrE)?", o:["the fourteen of February","the fourteenth of February"], a:1, e:"Дату читаємо порядковим числом."}
+  ],
+  "quiz-years":[
+    {q:"1905 читаємо так:", o:["nineteen zero five","nineteen oh five","nineteen five"], a:1, e:"0 у році читаємо як «oh»."},
+    {q:"1800 читаємо так:", o:["eighteen hundred","one thousand eight hundred","eighteen hundreds"], a:0, e:"Рік на 00: eighteen hundred, без -s."},
+    {q:"1850 рік. Яке це століття?", o:["the eighteenth century","the nineteenth century"], a:1, e:"Роки 1801–1900 належать до XIX століття."},
+    {q:"2007 зазвичай читаємо так:", o:["two thousand and seven","twenty seven"], a:0, e:"Роки 2001–2009 зазвичай читають two thousand and…"},
+    {q:"Як правильно написати «дев'яності»?", o:["the 1990's","the 1990s"], a:1, e:"Апостроф перед s не потрібен."}
+  ],
+  "quiz-phone":[
+    {q:"Як прочитати 44 у номері?", o:["forty-four","double four","four four four"], a:1, e:"Дві однакові цифри поспіль: double."},
+    {q:"Як прочитати 0 у номері телефону?", o:["oh","nil","love"], a:0, e:"У телефонних номерах 0 читаємо як oh."},
+    {q:"Як прочитати 777?", o:["seven hundred and seventy-seven","triple seven"], a:1, e:"Три однакові цифри поспіль: triple."}
+  ],
+  "quiz-money":[
+    {q:"$20 читаємо так:", o:["dollars twenty","twenty dollars"], a:1, e:"Знак пишемо перед числом, але читаємо після."},
+    {q:"£3.20 читаємо так:", o:["three pounds twenty","three point twenty pounds"], a:0, e:"Спочатку фунти, потім пенси: three pounds twenty."},
+    {q:"€5 читаємо так:", o:["five euros","five euro's"], a:0, e:"Множина: euros, без апострофа."}
+  ],
+  "quiz-extras":[
+    {q:"Хлопчик, якому десять років:", o:["a ten-years-old boy","a ten-year-old boy"], a:1, e:"Число як прикметник: без -s."},
+    {q:"Henry VIII:", o:["Henry Eight","Henry the Eighth","Henry the Eight"], a:1, e:"Римську цифру читаємо як порядкове число з the."},
+    {q:"Двічі:", o:["two times","twice"], a:1, e:"1 раз = once, 2 рази = twice, далі three times."},
+    {q:"Наш 1-й поверх у Британії:", o:["the first floor","the ground floor"], a:1, e:"У Британії first floor = наш 2-й поверх."},
+    {q:"Як правильно почати речення?", o:["20 students came.","Twenty students came."], a:1, e:"Речення не починаємо з цифри."}
+  ]
+};
+
+var total=0, correct=0;
+function updScore(){ document.getElementById("score").textContent = correct+" / "+total; }
+function renderQuizzes(){
+  total=0; correct=0;
+  Object.keys(QUIZ).forEach(function(id){
+    var host=document.getElementById(id); host.innerHTML="";
+    QUIZ[id].forEach(function(item, qi){
+      total++;
+      var q=document.createElement("div"); q.className="q";
+      var t=document.createElement("div"); t.className="q-text"; t.textContent=item.q; q.appendChild(t);
+      var opts=document.createElement("div"); opts.className="opts"; q.appendChild(opts);
+      var ex=document.createElement("div"); ex.className="expl"; ex.hidden=true; q.appendChild(ex);
+      item.o.forEach(function(o, oi){
+        var b=document.createElement("button"); b.type="button"; b.className="opt"; b.textContent=o; b.id=id+"-"+qi+"-"+oi;
+        b.addEventListener("click", function(){
+          var all=opts.querySelectorAll(".opt");
+          all.forEach(function(x){ x.disabled=true; });
+          all[item.a].classList.add("right");
+          if(oi===item.a){ correct++; ex.className="expl ok"; }
+          else { b.classList.add("wrong"); ex.className="expl no"; }
+          if(item.e){ ex.textContent=item.e; ex.hidden=false; }
+          updScore();
+        });
+        opts.appendChild(b);
+      });
+      host.appendChild(q);
+    });
+  });
+  updScore();
+}
+renderQuizzes();
+
+// ---------- exercise 1 ----------
+var EX=[[22,11,1925],[12,7,1787],[21,3,1968],[2,4,1999],[3,5,1256],[1,1,2013],[5,9,1011],[4,10,2002],[20,6,1979],[9,2,1567]];
+var SHORT=["Jan.","Feb.","Mar.","Apr.","May","Jun.","Jul.","Aug.","Sep.","Oct.","Nov.","Dec."];
+function norm(s){ return s.toLowerCase().replace(/[’']/g,"").replace(/[-,.]/g," ").replace(/\s+/g," ").trim(); }
+function accepted(d,m,y){
+  var dd=ordinalWords(cardinal(d)), mon=MONTHS[m-1].toLowerCase(), ys=yearWords(y).slice();
+  ys.forEach(function(v){ if(v.indexOf(" and ")>-1) ys.push(v.replace(" and "," ")); });
+  var out=[];
+  ys.forEach(function(yw){
+    ["the "+dd+" of "+mon, dd+" of "+mon, mon+" the "+dd, mon+" "+dd].forEach(function(p){ out.push(norm(p+" "+yw)); });
+  });
+  return out;
+}
+function model(d,m,y){ return "the "+ordinalWords(cardinal(d))+" of "+MONTHS[m-1]+", "+yearWords(y).join(" / "); }
+var exHost=document.getElementById("ex1");
+EX.forEach(function(r,i){
+  var row=document.createElement("div"); row.className="ex-row";
+  var lab=document.createElement("label"); lab.className="date"; lab.htmlFor="ex-"+i; lab.textContent=r[0]+" "+SHORT[r[1]-1]+" "+r[2];
+  var inp=document.createElement("input"); inp.type="text"; inp.id="ex-"+i; inp.autocomplete="off"; inp.spellcheck=false; inp.placeholder="the … of …";
+  var sb=document.createElement("button"); sb.type="button"; sb.className="speak"; sb.setAttribute("aria-label","Прослухати відповідь"); sb.textContent="\u{1F50A}"; sb.setAttribute("data-say", "the "+ordinalWords(cardinal(r[0]))+" of "+MONTHS[r[1]-1]+", "+yearWords(r[2])[0]);
+  var fb=document.createElement("div"); fb.className="fb";
+  row.appendChild(lab); row.appendChild(inp); row.appendChild(sb); row.appendChild(fb);
+  inp.addEventListener("keydown", function(e){ if(e.key==="Enter") checkOne(i); });
+  exHost.appendChild(row);
+});
+function checkOne(i){
+  var r=EX[i], inp=document.getElementById("ex-"+i), fb=inp.parentNode.querySelector(".fb");
+  if(!inp.value.trim()){ inp.classList.remove("right","wrong"); fb.textContent=""; return null; }
+  var ok = accepted(r[0],r[1],r[2]).indexOf(norm(inp.value))>-1;
+  inp.classList.toggle("right", ok); inp.classList.toggle("wrong", !ok);
+  fb.textContent = ok ? "" : "Перевірте ще раз. Підказка: день читаємо порядковим числом, рік ділимо на пари.";
+  return ok;
+}
+document.getElementById("ex-check").addEventListener("click", function(){ EX.forEach(function(_,i){ checkOne(i); }); });
+document.getElementById("ex-show").addEventListener("click", function(){
+  EX.forEach(function(r,i){ var inp=document.getElementById("ex-"+i); inp.parentNode.querySelector(".fb").textContent="Відповідь: "+model(r[0],r[1],r[2]); });
+});
+document.getElementById("ex-clear").addEventListener("click", function(){
+  EX.forEach(function(_,i){ var inp=document.getElementById("ex-"+i); inp.value=""; inp.classList.remove("right","wrong"); inp.parentNode.querySelector(".fb").textContent=""; });
+});
+document.getElementById("reset").addEventListener("click", function(){ renderQuizzes(); document.getElementById("ex-clear").click(); });
+})();
+</script>
+</body>
+</html>
